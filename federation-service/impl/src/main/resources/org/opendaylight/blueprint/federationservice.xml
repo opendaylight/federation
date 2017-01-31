@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) 2016 Hewlett Packard Enterprise, Co. and others. All rights
+    reserved. This program and the accompanying materials are made available
+    under the terms of the Eclipse Public License v1.0 which accompanies this
+    distribution, and is available at http://www.eclipse.org/legal/epl-v10.html -->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+  xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+  xmlns:odl="http://opendaylight.org/xmlns/blueprint/v1.0.0">
+
+
+  <reference id="clusterProvider"
+    interface="org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider"
+    odl:type="default" />
+
+  <reference id="dataBroker"
+    interface="org.opendaylight.controller.md.sal.binding.api.DataBroker"
+    odl:type="default" />
+
+  <reference id="messageBus"
+    interface="org.opendaylight.messagequeue.IMessageBusClient" />
+
+  <odl:clustered-app-config id="federationCfg"
+    binding-class="org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.federation.service.config.rev161110.FederationConfigData"
+    default-config-file-name="federation-service-config.xml">
+  </odl:clustered-app-config>
+
+  <service ref="consumerMgr" odl:type="default">
+    <interfaces>
+      <value>org.opendaylight.federation.service.api.IFederationConsumerMgr</value>
+      <value>org.opendaylight.federation.service.api.IConsumerManagement</value>
+    </interfaces>
+  </service>
+
+  <service ref="producerMgr" odl:type="default"
+    interface="org.opendaylight.federation.service.api.IFederationProducerMgr" />
+
+  <bean id="consumerMgr" init-method="init" destroy-method="close"
+    class="org.opendaylight.federation.service.impl.FederationConsumerMgr">
+    <argument ref="messageBus" />
+    <argument ref="federationCfg" />
+    <argument ref="dataBroker" />
+    <argument ref="clusterProvider" />
+  </bean>
+  <bean id="producerMgr" init-method="init" destroy-method="destroy"
+    class="org.opendaylight.federation.service.impl.FederationProducerMgr">
+    <argument ref="messageBus" />
+    <argument ref="dataBroker" />
+    <argument ref="federationCfg" />
+    <argument ref="clusterProvider" />
+    <argument ref="consumerMgr" />
+  </bean>
+</blueprint>

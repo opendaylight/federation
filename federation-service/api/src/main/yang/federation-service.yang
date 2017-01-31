@@ -1,0 +1,83 @@
+module federation-service-config {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:federation-service-config";
+    prefix "federation-service";
+
+
+    import ietf-yang-types { prefix "yang"; }
+
+    revision "2016-11-10" {
+        description "Initial revision of federation service model";
+    }
+
+    container federation-config-data {
+        leaf site-id {
+            type yang:uuid;
+            description "site self UUID as allocated by xsite-manager";
+        }
+        leaf site-ip {
+            type string;
+            default "127.0.0.1";
+            description "site self IP as seen by xsite-manager";
+        }
+        leaf mqBrokerIp {
+            type string;
+            default "127.0.0.1";
+            description "MQ Broker ip";
+        }
+        leaf mqPortNumber {
+            type int32;
+            default 5672;
+            description "MQ Port number";
+        }
+        leaf mqUser {
+            type string;
+            default "guest";
+            description "Specifies MQ user name";
+        }
+        leaf mqUserPwd {
+            type string;
+            default "guest";
+            description "Specifies MQ user password";
+        }
+        leaf controlQueueName {
+            type string;
+            default "CONTROL_QUEUE_127.0.0.1";
+            description "Specifies MQ control queue name";
+        }
+      }
+
+    container federation-sites-config {
+        list federation-site-config {
+            key site-ip;
+            unique site-ip;
+            leaf site-ip {
+                type string;
+                description "site IP ";
+            }
+            leaf broker-ip {
+                type string;
+                description "broker IP ";
+            }
+            leaf mqPortNumber {
+                type int32;
+                default 5672;
+                description "MQ Port number";
+            }
+            leaf mqUser {
+                type string;
+                default "guest";
+                description "Specifies MQ user name";
+            }
+            leaf mqUserPwd {
+                type string;
+                default "guest";
+                description "Specifies MQ user password";
+            }
+            leaf controlQueueName {
+                type string;
+                description "Specifies MQ control queue name";
+            }
+        }
+    }
+}
