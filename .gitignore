@@ -1,0 +1,10 @@
+**/.checkstyle
+**/.classpath
+**/META-INF
+**/target
+**/*.prefs
+**/.project
+**/.settings/
+bin/
+environment
+/target
