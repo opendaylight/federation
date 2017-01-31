@@ -46,10 +46,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <version>${infrautils.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.opendaylight.mdsal.model</groupId>
-      <artifactId>ietf-topology</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.opendaylight.federation</groupId>
       <artifactId>federation-message-queue-api</artifactId>
       <version>0.1.2-SNAPSHOT</version>

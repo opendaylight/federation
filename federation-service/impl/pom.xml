@@ -17,7 +17,6 @@
 
   <properties>
     <neutron.version>0.7.2-SNAPSHOT</neutron.version>
-    <ovsdb.version>1.3.2-SNAPSHOT</ovsdb.version>
   </properties>
 
   <groupId>org.opendaylight.federation</groupId>
@@ -46,12 +45,6 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.awaitility</groupId>
-      <artifactId>awaitility</artifactId>
-      <version>2.0.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
