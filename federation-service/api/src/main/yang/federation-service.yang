@@ -45,6 +45,11 @@ module federation-service-config {
             default "CONTROL_QUEUE_127.0.0.1";
             description "Specifies MQ control queue name";
         }
+        leaf startService {
+            type boolean;
+            default false;
+            description "Federation service will be enabled only when changing this to true";
+        }
       }
 
     container federation-sites-config {

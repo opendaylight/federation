@@ -87,16 +87,28 @@ public class FederationProducerMgr
     }
 
     public void init() {
-        LOG.info("starting {}", getClass().getSimpleName() + " registering to cluster service");
-        clusterRegistrationHandle = clusterSingletonServiceProvider.registerClusterSingletonService(this);
+        LOG.info("starting {}", getClass().getSimpleName());
+        if (config.isStartService()) {
+            LOG.info("registering {} to cluster service", getClass().getSimpleName());
+            clusterRegistrationHandle = clusterSingletonServiceProvider.registerClusterSingletonService(this);
+        } else {
+            LOG.info("Federation startService is configured to false");
+        }
+        storeConfigInDatastore();
     }
 
     public void destroy() {
         LOG.info("closing {}", getClass().getSimpleName());
+        if (!config.isStartService()) {
+            LOG.info("Nothing to do, because service wasn't actually configured to start (startService was false)");
+            return ;
+        }
         try {
-            clusterRegistrationHandle.close();
-        } catch (Exception e) {
-            LOG.error("Couldn't unregister from cluster singleton service", e);
+            if (clusterRegistrationHandle != null) {
+                clusterRegistrationHandle.close();
+            }
+        } catch (Throwable t) {
+            LOG.error("Couldn't unregister from cluster singleton service", t);
         }
         LOG.info("Destroying control queue {}", config.getControlQueueName());
         messageBus.destroyQueue(config.getControlQueueName());
@@ -309,7 +321,6 @@ public class FederationProducerMgr
         try {
             LOG.info("Gained federation leadership, creating control queue and attaching a handler");
             LOG.info("Latest configuration is: " + config);
-            storeConfig();
             boolean created = messageBus.createQueue(config.getControlQueueName(), config.getMqBrokerIp(),
                     config.getMqPortNumber(), config.getMqUser(), config.getMqUserPwd());
             if (!created) {
@@ -351,7 +362,7 @@ public class FederationProducerMgr
         }
     }
 
-    private void storeConfig() {
+    private void storeConfigInDatastore() {
         try {
             WriteTransaction writeTx = db.newWriteOnlyTransaction();
             writeTx.merge(LogicalDatastoreType.CONFIGURATION, InstanceIdentifier.create(FederationConfigData.class),

@@ -8,6 +8,7 @@
 package org.opendaylight.federation.service.impl;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Map;
@@ -65,7 +66,10 @@ public class FederationConsumerMgr implements IFederationConsumerMgr, IConsumerM
 
     public void init() {
         LOG.info("starting {}", getClass().getSimpleName());
-        clusterRegistrationHandle = clusterSingletonServiceProvider.registerClusterSingletonService(this);
+        if (config.isStartService()) {
+            LOG.info("registering {} to cluster service", getClass().getSimpleName());
+            clusterRegistrationHandle = clusterSingletonServiceProvider.registerClusterSingletonService(this);
+        }
     }
 
     public void close() {
@@ -73,14 +77,15 @@ public class FederationConsumerMgr implements IFederationConsumerMgr, IConsumerM
         if (clusterRegistrationHandle != null) {
             try {
                 clusterRegistrationHandle.close();
-            } catch (Exception e) {
-                LOG.error("Couldn't unregister from cluster singleton service", e);
+            } catch (Throwable t) {
+                LOG.error("Couldn't unregister from cluster singleton service", t);
             }
         }
     }
 
     @Override
     public synchronized void subscribe(String remoteIp, Object payload, IFederationPluginIngress pluginConsumer) {
+        Preconditions.checkState(config.isStartService(), "Federation service is configured not to start");
         subscribe(remoteIp, payload, pluginConsumer, false);
     }
 
@@ -140,6 +145,7 @@ public class FederationConsumerMgr implements IFederationConsumerMgr, IConsumerM
 
     @Override
     public void unsubscribe(String remoteIp) {
+        Preconditions.checkState(config.isStartService(), "Federation service is configured not to start");
         if (!isLeader) {
             LOG.error("Unsubscribe called on a non-leader service");
             return;

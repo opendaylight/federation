@@ -1,8 +1,11 @@
 <federation-config-data xmlns="urn:opendaylight:params:xml:ns:yang:federation-service-config">
+<!--
   <site-ip>127.0.0.1</site-ip>
   <mqBrokerIp>127.0.0.1</mqBrokerIp>
   <mqPortNumber>5672</mqPortNumber>
   <mqUser>guest</mqUser>
   <mqUserPwd>guest</mqUserPwd>
   <controlQueueName>CONTROL_QUEUE_127.0.0.1</controlQueueName>
+  <startService>true</startService>
+-->
 </federation-config-data>
