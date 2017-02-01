@@ -14,9 +14,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.federation.service.api.message.EndFullSyncFederationMessage;
-import org.opendaylight.federation.service.api.message.EntityFederationMessage;
 import org.opendaylight.federation.service.api.message.StartFullSyncFederationMessage;
 import org.opendaylight.federation.service.api.message.WrapperEntityFederationMessage;
+import org.opendaylight.federation.service.common.api.EntityFederationMessage;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WrapperConsumerTest {
@@ -89,8 +89,7 @@ public class WrapperConsumerTest {
 
     @SuppressWarnings("rawtypes")
     private WrapperEntityFederationMessage buildMsg(long sequenceId) {
-        return (WrapperEntityFederationMessage) new WrapperEntityFederationMessage()
-                .setPayload(new EntityFederationMessage())
+        return (WrapperEntityFederationMessage) new WrapperEntityFederationMessage(new EntityFederationMessage())
                 .setSequenceId(sequenceId);
     }
 }

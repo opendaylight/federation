@@ -10,8 +10,8 @@ package org.opendaylight.federation.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import org.opendaylight.federation.service.api.IFederationPluginIngress;
-import org.opendaylight.federation.service.api.message.EntityFederationMessage;
+import org.opendaylight.federation.plugin.spi.IFederationPluginIngress;
+import org.opendaylight.federation.service.common.api.EntityFederationMessage;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 
 public class FederationPluginIngressStub implements IFederationPluginIngress {
@@ -19,7 +19,7 @@ public class FederationPluginIngressStub implements IFederationPluginIngress {
     private int beginCount = 0;
     private int endCount = 0;
     private int mismatchCount = 0;
-    List<EntityFederationMessage<? extends DataObject, ? extends DataObject>> consumedMsgs = new ArrayList<>();
+    List<EntityFederationMessage<? extends DataObject>> consumedMsgs = new ArrayList<>();
 
     @Override
     public void beginFullSync() {
@@ -32,7 +32,7 @@ public class FederationPluginIngressStub implements IFederationPluginIngress {
     }
 
     @Override
-    public void consumeMsg(EntityFederationMessage<? extends DataObject, ? extends DataObject> msg) {
+    public void consumeMsg(EntityFederationMessage<? extends DataObject> msg) {
         consumedMsgs.add(msg);
     }
 
@@ -58,7 +58,7 @@ public class FederationPluginIngressStub implements IFederationPluginIngress {
         return mismatchCount;
     }
 
-    public List<EntityFederationMessage<? extends DataObject, ? extends DataObject>> getConsumedMsgs() {
+    public List<EntityFederationMessage<? extends DataObject>> getConsumedMsgs() {
         return consumedMsgs;
     }
 

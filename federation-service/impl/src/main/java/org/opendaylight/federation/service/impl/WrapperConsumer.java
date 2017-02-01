@@ -8,7 +8,7 @@
 package org.opendaylight.federation.service.impl;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.opendaylight.federation.service.api.IFederationPluginIngress;
+import org.opendaylight.federation.plugin.spi.IFederationPluginIngress;
 import org.opendaylight.federation.service.api.federationutil.FederationCounters;
 import org.opendaylight.federation.service.api.federationutil.FederationUtils;
 import org.opendaylight.federation.service.api.message.EndFullSyncFederationMessage;

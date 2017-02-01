@@ -13,7 +13,7 @@ module federation-service-config {
     container federation-config-data {
         leaf site-id {
             type yang:uuid;
-            description "site self UUID as allocated by xsite-manager";
+            description "UUID which can be allocated by an external orchestration system";
         }
         leaf site-ip {
             type string;

@@ -30,20 +30,20 @@ import org.opendaylight.controller.md.sal.binding.api.WriteTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
+import org.opendaylight.federation.plugin.spi.IFederationPluginEgress;
+import org.opendaylight.federation.plugin.spi.IPluginFactory;
 import org.opendaylight.federation.service.api.IConsumerManagement;
-import org.opendaylight.federation.service.api.IFederationPluginEgress;
 import org.opendaylight.federation.service.api.IFederationProducerMgr;
-import org.opendaylight.federation.service.api.IPluginFactory;
 import org.opendaylight.federation.service.api.IProducerSubscriptionMgr;
-import org.opendaylight.federation.service.api.ListenerData;
 import org.opendaylight.federation.service.api.federationutil.FederationConstants;
 import org.opendaylight.federation.service.api.federationutil.FederationCounters;
 import org.opendaylight.federation.service.api.message.EndFullSyncFederationMessage;
-import org.opendaylight.federation.service.api.message.EntityFederationMessage;
 import org.opendaylight.federation.service.api.message.StartFullSyncFederationMessage;
 import org.opendaylight.federation.service.api.message.SubscribeMessage;
 import org.opendaylight.federation.service.api.message.UnsubscribeMessage;
 import org.opendaylight.federation.service.api.message.WrapperEntityFederationMessage;
+import org.opendaylight.federation.service.common.api.EntityFederationMessage;
+import org.opendaylight.federation.service.common.api.ListenerData;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonService;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
 import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceRegistration;
@@ -117,7 +117,12 @@ public class FederationProducerMgr
             String consumerId = entry.getKey();
             ConsumerState state = entry.getValue();
             LOG.info("Aborting and cleaning egress plugin of {}", consumerId);
-            state.pluginEgress.abort();
+            CompletionStage<Void> aborted = state.pluginEgress.abort();
+            try {
+                aborted.toCompletableFuture().get(5, TimeUnit.SECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                LOG.warn("Waited for plugin to abort for 5 seconds, but recieved {}", e.getMessage());
+            }
             state.pluginEgress.cleanup();
             LOG.info("Destroying dynamic queue {}", state.dynamicQueueName);
             messageBus.destroyQueue(state.dynamicQueueName);
@@ -235,13 +240,12 @@ public class FederationProducerMgr
         return consumerIdToState.get(consumerId).generalSequence.getAndIncrement();
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    public void publishMessage(EntityFederationMessage msg,
+    public void publishMessage(EntityFederationMessage<? extends DataObject> msg,
             String queueName, String consumerId) {
         FederationCounters.msg_published.inc();
         WrapperEntityFederationMessage wrapperMsg =
-                (WrapperEntityFederationMessage) new WrapperEntityFederationMessage().setPayload(msg)
+                (WrapperEntityFederationMessage) new WrapperEntityFederationMessage(msg)
                         .setSequenceId(getNextSequence(consumerId));
         messageBus.sendMsg(wrapperMsg, queueName);
 

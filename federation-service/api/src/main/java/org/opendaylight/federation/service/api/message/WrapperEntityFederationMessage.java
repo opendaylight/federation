@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Hewlett Packard Enterprise, Co. and others. All rights reserved.
+ * Copyright (c) 2017 Hewlett Packard Enterprise, Co. and others. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,17 +7,23 @@
  */
 package org.opendaylight.federation.service.api.message;
 
+import org.opendaylight.federation.service.common.api.EntityFederationMessage;
+import org.opendaylight.yangtools.yang.binding.DataObject;
+
+/**
+ * A wrapper for the {@link EntityFederationMessage} used by the plugins. This wrapper is not exposed to the plugins and
+ * may be used by the infrastructure to add metadata about the message.
+ */
 public class WrapperEntityFederationMessage extends SequencedFederationMessage {
 
-    private EntityFederationMessage payload;
+    private final EntityFederationMessage<? extends DataObject> payload;
 
-    public EntityFederationMessage getPayload() {
-        return payload;
+    public WrapperEntityFederationMessage(EntityFederationMessage<? extends DataObject> payload) {
+        this.payload = payload;
     }
 
-    public WrapperEntityFederationMessage setPayload(EntityFederationMessage payload) {
-        this.payload = payload;
-        return this;
+    public EntityFederationMessage<? extends DataObject> getPayload() {
+        return payload;
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Hewlett Packard Enterprise, Co. and others. All rights reserved.
+ * Copyright (c) 2017 Hewlett Packard Enterprise, Co. and others. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -10,6 +10,9 @@ package org.opendaylight.federation.service.api.message;
 import com.google.common.base.Preconditions;
 import org.opendaylight.messagequeue.AbstractFederationMessage;
 
+/**
+ * Subscription issued by the consumer site to the producer site in order to subscribe for a federation session.
+ */
 public class SubscribeMessage extends AbstractFederationMessage {
     private final String dynamicQueueName;
     private final String pluginType;
@@ -19,12 +22,12 @@ public class SubscribeMessage extends AbstractFederationMessage {
     private final boolean requestMutualSubscription;
 
     public SubscribeMessage(String dynamicQueueName, String pluginType, Object payload, String subscriberIp,
-            String contextId) {
+        String contextId) {
         this(dynamicQueueName, pluginType, payload, subscriberIp, contextId, false);
     }
 
     public SubscribeMessage(String dynamicQueueName, String pluginType, Object payload, String subscriberIp,
-            String contextId, boolean requestMutualSubscription) {
+        String contextId, boolean requestMutualSubscription) {
         super();
         this.dynamicQueueName = Preconditions.checkNotNull(dynamicQueueName);
         this.pluginType = Preconditions.checkNotNull(pluginType);
@@ -49,8 +52,8 @@ public class SubscribeMessage extends AbstractFederationMessage {
     @Override
     public String toString() {
         return "SubscribeMessage [dynamicQueueName=" + dynamicQueueName + ", pluginType=" + pluginType + ", payload="
-                + payload + ", subscriberIp=" + subscriberIp + ", contextId=" + contextId
-                + ", requestMutualSubscription=" + requestMutualSubscription + "]";
+            + payload + ", subscriberIp=" + subscriberIp + ", contextId=" + contextId + ", requestMutualSubscription="
+            + requestMutualSubscription + "]";
     }
 
     public String getSubscriberIp() {

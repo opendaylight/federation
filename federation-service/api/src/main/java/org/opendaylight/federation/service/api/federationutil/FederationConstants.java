@@ -8,7 +8,6 @@
 package org.opendaylight.federation.service.api.federationutil;
 
 public interface FederationConstants {
-    int MSG_NOT_IN_TX_ID = -1;
     String LOGGER_PREFIX = "federation.";
     String CONTROL_QUEUE = "FederationControlQueue";
     String DYNAMIC_QUEUE_SUFFIX = "_FederationDynamicQueue";

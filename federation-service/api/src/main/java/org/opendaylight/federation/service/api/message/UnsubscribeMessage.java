@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Hewlett Packard Enterprise, Co. and others. All rights reserved.
+ * Copyright (c) 2017 Hewlett Packard Enterprise, Co. and others. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -10,8 +10,8 @@ package org.opendaylight.federation.service.api.message;
 import com.google.common.base.Preconditions;
 import org.opendaylight.messagequeue.AbstractFederationMessage;
 
-/* Called only to close the consumer's dynamic queue in the producer side, and do
- * full cleanup
+/**
+ * Unsubscription issued by the consumer site to the producer site in order to close and clean the federation session.
  */
 public class UnsubscribeMessage extends AbstractFederationMessage {
 
