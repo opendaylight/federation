@@ -44,18 +44,18 @@
       <artifactId>mockito-all</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-server</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-client</artifactId>
-    </dependency>
+<!--     <dependency> -->
+<!--       <groupId>com.sun.jersey</groupId> -->
+<!--       <artifactId>jersey-core</artifactId> -->
+<!--     </dependency> -->
+<!--     <dependency> -->
+<!--       <groupId>com.sun.jersey</groupId> -->
+<!--       <artifactId>jersey-server</artifactId> -->
+<!--     </dependency> -->
+<!--     <dependency> -->
+<!--       <groupId>com.sun.jersey</groupId> -->
+<!--       <artifactId>jersey-client</artifactId> -->
+<!--     </dependency> -->
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>javax.json</artifactId>
@@ -73,7 +73,6 @@
     <dependency>
       <groupId>com.typesafe.akka</groupId>
       <artifactId>akka-osgi_2.11</artifactId>
-      <version>2.4.8</version>
     </dependency>
     <dependency>
       <groupId>com.esotericsoftware</groupId>
