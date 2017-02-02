@@ -10,14 +10,14 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
 
   <parent>
     <groupId>org.opendaylight.odlparent</groupId>
-    <artifactId>odlparent</artifactId>
-    <version>1.7.2-SNAPSHOT</version>
+    <artifactId>odlparent-lite</artifactId>
+    <version>1.8.0-SNAPSHOT</version>
     <relativePath/>
   </parent>
 
   <groupId>org.opendaylight.federation</groupId>
   <artifactId>federation-aggregator</artifactId>
-  <version>0.1.2-SNAPSHOT</version>
+  <version>0.2.0-SNAPSHOT</version>
   <name>federation</name>
   <packaging>pom</packaging>
 
@@ -35,7 +35,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
   <modules>
     <module>commons/config-parent</module>
     <module>commons/binding-parent</module>
-    <module>commons/it-parent</module>
     <module>federation-message-queue/api</module>
     <module>federation-message-queue/impl</module>
     <module>federation-service/impl</module>
