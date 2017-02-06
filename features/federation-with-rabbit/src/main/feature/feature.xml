@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features name="federation-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0">
+    <feature name="federation-with-rabbit" version="${project.version}">
+        <configfile
+      finalname="etc/opendaylight/datastore/initial/config/federation-service-config.xml">mvn:org.opendaylight.federation/federation-service-impl/${project.version}/xml/config</configfile>
+    </feature>
+</features>
