@@ -47,7 +47,7 @@ module federation-service-config {
         }
         leaf startService {
             type boolean;
-            default false;
+            default true;
             description "Federation service will be enabled only when changing this to true";
         }
       }
