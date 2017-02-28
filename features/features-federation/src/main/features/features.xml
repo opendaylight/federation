@@ -16,6 +16,7 @@
     <feature version='${mdsal.version}'>odl-mdsal-broker</feature>
     <feature version='${restconf.version}'>odl-mdsal-apidocs</feature>
     <feature version='${infrautils.version}'>odl-infrautils-counters</feature>
+    <feature version='${guava.version}'>odl-guava</feature>
     <bundle>mvn:org.opendaylight.federation/federation-message-queue-api/{{VERSION}}</bundle>
     <bundle>mvn:org.opendaylight.federation/federation-service-api/{{VERSION}}</bundle>
     <bundle>mvn:org.opendaylight.federation/federation-service-impl/{{VERSION}}</bundle>
