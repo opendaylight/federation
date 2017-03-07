@@ -14,11 +14,11 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import javassist.ClassPool;
+import org.opendaylight.mdsal.binding.generator.impl.ModuleInfoBackedContext;
+import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
+import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.StreamWriterGenerator;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
-import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleInfoBackedContext;
-import org.opendaylight.yangtools.sal.binding.generator.util.BindingRuntimeContext;
-import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -55,7 +55,7 @@ public class BindingAwareJsonConverter {
      *
      * @param moduleInfos The collection of all entity types {@link YangModuleInfo} that can be federated.
      */
-    public static void init(Iterable<? extends YangModuleInfo> moduleInfos) {
+    public static void init(final Iterable<? extends YangModuleInfo> moduleInfos) {
         final ModuleInfoBackedContext moduleContext = ModuleInfoBackedContext.create();
         moduleContext.addModuleInfos(moduleInfos);
         context = moduleContext.tryToCreateSchemaContext().get();
@@ -78,7 +78,7 @@ public class BindingAwareJsonConverter {
      * @param object DataObject
      * @return String
      */
-    public static String jsonStringFromDataObject(InstanceIdentifier<?> path, DataObject object) {
+    public static String jsonStringFromDataObject(final InstanceIdentifier<?> path, final DataObject object) {
         return jsonStringFromDataObject(path, object, false);
     }
 
@@ -94,7 +94,8 @@ public class BindingAwareJsonConverter {
      * @param pretty boolean
      * @return String
      */
-    public static String jsonStringFromDataObject(InstanceIdentifier<?> path, DataObject object, boolean pretty) {
+    public static String jsonStringFromDataObject(final InstanceIdentifier<?> path, final DataObject object,
+            final boolean pretty) {
         if (object == null) {
             return null;
         }
@@ -132,7 +133,7 @@ public class BindingAwareJsonConverter {
         return transformedInput;
     }
 
-    public static DataObject dataObjectFromNormalizedNode(QName qname, NormalizedNode<?, ?> nn) {
+    public static DataObject dataObjectFromNormalizedNode(final QName qname, final NormalizedNode<?, ?> nn) {
         return codecRegistry.fromNormalizedNode(YangInstanceIdentifier.of(qname), nn).getValue();
     }
 }
