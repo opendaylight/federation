@@ -13,6 +13,7 @@ public enum FederationCounters {
 
     sequence_mismatch,
     begin_fullsync,
+    failed_fullsync,
     end_fullsync,
     consume_msg,
     msg_while_aborted,
@@ -27,6 +28,7 @@ public enum FederationCounters {
     msg_published,
     start_full_sync_msg_sent,
     end_full_sync_msg_sent,
+    full_sync_failed_msg_sent,
     msg_sent_out_tx,
     fullsync_event;
 
