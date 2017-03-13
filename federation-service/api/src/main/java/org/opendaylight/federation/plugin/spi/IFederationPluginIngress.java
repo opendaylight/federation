@@ -27,6 +27,13 @@ public interface IFederationPluginIngress {
     void beginFullSync();
 
     /**
+     * Might be invoked during the Full Sync stage when the producer site detects a faulty state that can't allow
+     * it to continue with the full sync. If {@link IFederationPluginIngress#fullSyncFailed} is invoked, it means
+     * that {@link IFederationPluginIngress#endFullSync} won't be invoked.
+     */
+    void fullSyncFailed();
+
+    /**
      * Invoked in the end of the Full Sync stage in order to let the plugin know that all the existing data from the
      * remote site was sent, and subsequent messages will be part of the ongoing MD-SAL updates.
      */

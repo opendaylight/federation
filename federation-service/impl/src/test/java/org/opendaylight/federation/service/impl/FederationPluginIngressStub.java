@@ -73,4 +73,9 @@ public class FederationPluginIngressStub implements IFederationPluginIngress {
     public CompletableFuture<Void> abort() {
         return CompletableFuture.completedFuture(null);
     }
+
+    @Override
+    public void fullSyncFailed() {
+
+    }
 }

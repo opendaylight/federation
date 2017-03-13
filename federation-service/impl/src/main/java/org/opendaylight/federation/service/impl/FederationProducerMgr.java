@@ -38,6 +38,7 @@ import org.opendaylight.federation.service.api.IProducerSubscriptionMgr;
 import org.opendaylight.federation.service.api.federationutil.FederationConstants;
 import org.opendaylight.federation.service.api.federationutil.FederationCounters;
 import org.opendaylight.federation.service.api.message.EndFullSyncFederationMessage;
+import org.opendaylight.federation.service.api.message.FullSyncFailedFederationMessage;
 import org.opendaylight.federation.service.api.message.StartFullSyncFederationMessage;
 import org.opendaylight.federation.service.api.message.SubscribeMessage;
 import org.opendaylight.federation.service.api.message.UnsubscribeMessage;
@@ -58,7 +59,7 @@ import org.slf4j.LoggerFactory;
 
 @SuppressWarnings(value = { "checkstyle:illegalcatch" })
 public class FederationProducerMgr
-        implements IFederationProducerMgr, IProducerSubscriptionMgr, ClusterSingletonService {
+    implements IFederationProducerMgr, IProducerSubscriptionMgr, ClusterSingletonService {
 
     private final ConcurrentHashMap<String, ConsumerState> consumerIdToState = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, IPluginFactory> pluginTypeToFactory = new ConcurrentHashMap<>();
@@ -68,7 +69,7 @@ public class FederationProducerMgr
 
     private static final Logger LOG = LoggerFactory.getLogger(FederationProducerMgr.class);
     private static final ServiceGroupIdentifier IDENT =
-            ServiceGroupIdentifier.create(FederationConstants.CLUSTERING_SERVICE_ID);
+        ServiceGroupIdentifier.create(FederationConstants.CLUSTERING_SERVICE_ID);
     private volatile String controlQueueConsumerTag = null;
     private final ClusterSingletonServiceProvider clusterSingletonServiceProvider;
     private ClusterSingletonServiceRegistration clusterRegistrationHandle;
@@ -78,7 +79,7 @@ public class FederationProducerMgr
     private static final int RETRY_INTERVAL = 10;
 
     public FederationProducerMgr(IMessageBusClient messageBus, DataBroker db, FederationConfigData config,
-            ClusterSingletonServiceProvider clusterSingletonServiceProvider, IConsumerManagement consumerMgr) {
+        ClusterSingletonServiceProvider clusterSingletonServiceProvider, IConsumerManagement consumerMgr) {
         this.messageBus = messageBus;
         this.db = db;
         this.config = config;
@@ -101,7 +102,7 @@ public class FederationProducerMgr
         LOG.info("closing {}", getClass().getSimpleName());
         if (!config.isStartService()) {
             LOG.info("Nothing to do, because service wasn't actually configured to start (startService was false)");
-            return ;
+            return;
         }
         try {
             if (clusterRegistrationHandle != null) {
@@ -149,11 +150,16 @@ public class FederationProducerMgr
             unsubscribeConsumer(msg.getContextId());
             LOG.info("Create new consumer context");
             messageBus.createQueue(msg.getDynamicQueueName(), config.getMqBrokerIp(), config.getMqPortNumber(),
-                    config.getMqUser(), config.getMqUserPwd());
+                config.getMqUser(), config.getMqUserPwd());
             ConsumerState consumerState = createConsumerContext(msg, pluginFactory);
             List<ListenerData> listenersData = consumerState.pluginEgress.getListenersData();
             publishStartFullSyncMsg(msg.getDynamicQueueName(), msg.getContextId());
-            handleFullSync(consumerState, listenersData);
+            try {
+                handleFullSync(consumerState, listenersData);
+            } catch (Throwable t) {
+                publishFullSyncFailedMsg(msg.getDynamicQueueName(), msg.getContextId());
+                return;
+            }
             publishEndFullSyncMsg(msg.getDynamicQueueName(), msg.getContextId());
             createSteadySyncListeners(consumerState, listenersData);
             if (msg.isRequestMutualSubscription()) {
@@ -168,15 +174,14 @@ public class FederationProducerMgr
     private void createSteadySyncListeners(ConsumerState consumerState, List<ListenerData> listenersData) {
         for (ListenerData data : listenersData) {
             FederationDataChangeListener listener =
-                    new FederationDataChangeListener(data.listenerId, consumerState.pluginEgress);
-            ListenerRegistration registrationHandle =
-                    db.registerDataTreeChangeListener(data.listenerPath, listener);
+                new FederationDataChangeListener(data.listenerId, consumerState.pluginEgress);
+            ListenerRegistration registrationHandle = db.registerDataTreeChangeListener(data.listenerPath, listener);
             consumerState.registrationHandles.add(registrationHandle);
         }
     }
 
     private void handleFullSync(ConsumerState consumerState, List<ListenerData> listenersData)
-            throws ReadFailedException {
+        throws ReadFailedException {
         for (ListenerData data : listenersData) {
             notifyExistingData(consumerState.pluginEgress, data);
         }
@@ -184,17 +189,17 @@ public class FederationProducerMgr
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void notifyExistingData(IFederationPluginEgress pluginEgress, ListenerData data)
-            throws ReadFailedException {
+        throws ReadFailedException {
         ReadOnlyTransaction readTx = db.newReadOnlyTransaction();
-        CheckedFuture<?, ReadFailedException> readFuture = readTx.read(data.checkExistingDataPath.getDatastoreType(),
-                data.checkExistingDataPath.getRootIdentifier());
+        CheckedFuture<?, ReadFailedException> readFuture =
+            readTx.read(data.checkExistingDataPath.getDatastoreType(), data.checkExistingDataPath.getRootIdentifier());
         Optional optionalExistingData = (Optional) readFuture.checkedGet();
         pluginEgress.fullSyncData(data.listenerId, optionalExistingData);
     }
 
     private ConsumerState createConsumerContext(SubscribeMessage msg, IPluginFactory pluginFactory) {
         IFederationPluginEgress pluginEgress =
-                pluginFactory.createEgressPlugin(msg.getPayload(), msg.getDynamicQueueName(), msg.getContextId());
+            pluginFactory.createEgressPlugin(msg.getPayload(), msg.getDynamicQueueName(), msg.getContextId());
         ConsumerState consumerState = new ConsumerState(pluginEgress, msg.getDynamicQueueName());
         consumerIdToState.put(msg.getContextId(), consumerState);
         return consumerState;
@@ -241,12 +246,11 @@ public class FederationProducerMgr
     }
 
     @Override
-    public void publishMessage(EntityFederationMessage<? extends DataObject> msg,
-            String queueName, String consumerId) {
+    public void publishMessage(EntityFederationMessage<? extends DataObject> msg, String queueName, String consumerId) {
         FederationCounters.msg_published.inc();
         WrapperEntityFederationMessage wrapperMsg =
-                (WrapperEntityFederationMessage) new WrapperEntityFederationMessage(msg)
-                        .setSequenceId(getNextSequence(consumerId));
+            (WrapperEntityFederationMessage) new WrapperEntityFederationMessage(msg)
+                .setSequenceId(getNextSequence(consumerId));
         messageBus.sendMsg(wrapperMsg, queueName);
 
     }
@@ -295,6 +299,14 @@ public class FederationProducerMgr
         messageBus.sendMsg(startFullSyncMsg, queueName);
     }
 
+    private void publishFullSyncFailedMsg(String queueName, String consumerId) {
+        LOG.info("Sent full sync failed message to queue {} ", queueName);
+        FederationCounters.full_sync_failed_msg_sent.inc();
+        FullSyncFailedFederationMessage fullSyncFailedMsg =
+            new FullSyncFailedFederationMessage(getNextSequence(consumerId));
+        messageBus.sendMsg(fullSyncFailedMsg, queueName);
+    }
+
     private void publishEndFullSyncMsg(String queueName, String consumerId) {
         LOG.info("Sent end full sync message to queue {} ", queueName);
         FederationCounters.end_full_sync_msg_sent.inc();
@@ -326,15 +338,15 @@ public class FederationProducerMgr
             LOG.info("Gained federation leadership, creating control queue and attaching a handler");
             LOG.info("Latest configuration is: " + config);
             boolean created = messageBus.createQueue(config.getControlQueueName(), config.getMqBrokerIp(),
-                    config.getMqPortNumber(), config.getMqUser(), config.getMqUserPwd());
+                config.getMqPortNumber(), config.getMqUser(), config.getMqUserPwd());
             if (!created) {
                 LOG.error("Control queue wasn't created, scheduling retrier");
                 retryHandle = retryExecutor.scheduleAtFixedRate(new RetryControlQueue(this), RETRY_INTERVAL,
-                        RETRY_INTERVAL, TimeUnit.SECONDS);
+                    RETRY_INTERVAL, TimeUnit.SECONDS);
             } else {
                 ControlMessagesConsumer controlMessagesConsumer = new ControlMessagesConsumer(this);
                 controlQueueConsumerTag =
-                        messageBus.attachHandler(config.getControlQueueName(), controlMessagesConsumer);
+                    messageBus.attachHandler(config.getControlQueueName(), controlMessagesConsumer);
                 LOG.info("Control queue {} was created successfully", config.getControlQueueName());
             }
         } catch (Throwable t) {
@@ -353,13 +365,13 @@ public class FederationProducerMgr
         @Override
         public void run() {
             boolean created = messageBus.createQueue(config.getControlQueueName(), config.getMqBrokerIp(),
-                    config.getMqPortNumber(), config.getMqUser(), config.getMqUserPwd());
+                config.getMqPortNumber(), config.getMqUser(), config.getMqUserPwd());
             if (!created) {
                 LOG.error("Control queue wasn't created, retrying in {} seconds", RETRY_INTERVAL);
             } else {
                 ControlMessagesConsumer controlMessagesConsumer = new ControlMessagesConsumer(mgr);
                 controlQueueConsumerTag =
-                        messageBus.attachHandler(config.getControlQueueName(), controlMessagesConsumer);
+                    messageBus.attachHandler(config.getControlQueueName(), controlMessagesConsumer);
                 LOG.info("Control queue was created successfully");
                 retryHandle.cancel(true);
             }
@@ -370,7 +382,7 @@ public class FederationProducerMgr
         try {
             WriteTransaction writeTx = db.newWriteOnlyTransaction();
             writeTx.merge(LogicalDatastoreType.CONFIGURATION, InstanceIdentifier.create(FederationConfigData.class),
-                    config);
+                config);
             writeTx.submit().checkedGet();
         } catch (TransactionCommitFailedException e) {
             LOG.error("Couldn't commit FederationConfigData to MD-SAL", e);
