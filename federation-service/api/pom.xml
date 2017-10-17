@@ -13,12 +13,12 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <parent>
     <groupId>org.opendaylight.federation</groupId>
     <artifactId>binding-parent</artifactId>
-    <version>0.2.2-SNAPSHOT</version>
+    <version>0.2.3-SNAPSHOT</version>
     <relativePath>../../commons/binding-parent</relativePath>
   </parent>
 
   <artifactId>federation-service-api</artifactId>
-  <version>0.2.2-SNAPSHOT</version>
+  <version>0.2.3-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>
@@ -37,7 +37,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <dependency>
       <groupId>org.opendaylight.controller</groupId>
       <artifactId>sal-binding-api</artifactId>
-      <version>1.5.2-SNAPSHOT</version>
+      <version>1.5.3-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.opendaylight.mdsal.model</groupId>
