@@ -10,22 +10,22 @@
   <parent>
     <groupId>org.opendaylight.odlparent</groupId>
     <artifactId>features-parent</artifactId>
-    <version>1.8.3-SNAPSHOT</version>
+    <version>1.8.4-SNAPSHOT</version>
     <relativePath />
   </parent>
 
   <groupId>org.opendaylight.federation</groupId>
   <artifactId>federation-features</artifactId>
-  <version>0.2.3-SNAPSHOT</version>
+  <version>0.2.4-SNAPSHOT</version>
   <name>${project.artifactId}</name>
 
   <properties>
-    <mdsal.model.version>0.10.3-SNAPSHOT</mdsal.model.version>
-    <mdsal.version>1.5.3-SNAPSHOT</mdsal.version>
-    <restconf.version>1.5.3-SNAPSHOT</restconf.version>
-    <yangtools.version>1.1.3-SNAPSHOT</yangtools.version>
+    <mdsal.model.version>0.10.4-SNAPSHOT</mdsal.model.version>
+    <mdsal.version>1.5.4-SNAPSHOT</mdsal.version>
+    <restconf.version>1.5.4-SNAPSHOT</restconf.version>
+    <yangtools.version>1.1.4-SNAPSHOT</yangtools.version>
     <configfile.directory>etc/opendaylight/karaf</configfile.directory>
-    <infrautils.version>1.1.3-SNAPSHOT</infrautils.version>
+    <infrautils.version>1.1.4-SNAPSHOT</infrautils.version>
     <guava.version>19.0</guava.version>
   </properties>
   <dependencyManagement>
