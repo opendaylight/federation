@@ -11,13 +11,13 @@
   <parent>
     <groupId>org.opendaylight.federation</groupId>
     <artifactId>config-parent</artifactId>
-    <version>0.2.4-SNAPSHOT</version>
+    <version>0.2.5-SNAPSHOT</version>
     <relativePath>../../commons/config-parent</relativePath>
   </parent>
 
   <groupId>org.opendaylight.federation</groupId>
   <artifactId>federation-service-impl</artifactId>
-  <version>0.2.4-SNAPSHOT</version>
+  <version>0.2.5-SNAPSHOT</version>
   <packaging>bundle</packaging>
 
   <dependencies>
